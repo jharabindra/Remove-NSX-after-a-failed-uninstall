@@ -1,0 +1,28 @@
+Put your ESXi hosts into maintenance mode
+
+Log into yur ESXi host
+
+Check to see what got left behind
+
+# Check for vmknic's
+esxcfg-vmknic -l 
+
+# Check for vswitches
+esxcfg-vswitch -l
+
+nsxdp-cli vswitch instance list
+Remove all filters
+vsipioctl clearallfilters -Override
+Stop netcpad
+/etc/init.d/netcpad stop
+Use the NSX cli to uninstall NSX
+$> nsxcli
+nsxcli> del nsx
+nsxcli> exit
+If you there are still vmk interfaces, remove them manually
+esxcli network ip interface remove --interface-name=<VMKID#>
+Verify all NSX traces have been removed
+esxcli software vib list | grep -i nsx
+Repeat on all ESXi hosts
+
+Take hosts out of maintenance mode
